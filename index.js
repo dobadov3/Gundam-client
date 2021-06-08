@@ -2,6 +2,7 @@ const express = require("express")
 const app = express();
 const port = 3000;
 const mongoose = require('mongoose');
+const redis = require("redis");
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var route = require('./routes/index.route');
@@ -17,6 +18,16 @@ app.use(cors())
 app.use(passport.initialize())
 app.use(passport.session())
 
+let redisClient = redis.createClient({
+    host: "localhost",
+    port: port,
+    password: "my secret",
+    db: 1,
+});
+
+redisClient.unref();
+redisClient.on("error", console.log);
+
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.set("trust proxy", 1);
@@ -27,7 +38,7 @@ app.use(
             secure: true,
             maxAge: 60000,
         },
-        store: new RedisStore(),
+        store: new RedisStore({ client: redisClient }),
         secret: "secret",
         saveUninitialized: true,
         resave: false,
