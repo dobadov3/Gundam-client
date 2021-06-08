@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express")
 const app = express();
 const port = 3000;
 const mongoose = require('mongoose');
@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var route = require('./routes/index.route');
 var session = require('express-session')
+let RedisStore = require("connect-redis")(session);
 var cors = require('cors')
 require('dotenv').config();
 const passport = require('passport')
@@ -26,6 +27,7 @@ app.use(
             secure: true,
             maxAge: 60000,
         },
+        store: new RedisStore(),
         secret: "secret",
         saveUninitialized: true,
         resave: false,
