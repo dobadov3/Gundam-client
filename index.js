@@ -1,6 +1,5 @@
 const express = require("express")
 const app = express();
-const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -13,6 +12,7 @@ require('dotenv').config();
 const passport = require('passport')
 const facebookStrategy = require('passport-facebook').Strategy
 
+const port = process.env.PORT || 3000;
 app.use(cors())
 
 app.use(passport.initialize())
