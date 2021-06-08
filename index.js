@@ -16,13 +16,22 @@ app.use(cors())
 app.use(passport.initialize())
 app.use(passport.session())
 
-mongoose.connect('mongodb://localhost/gundam', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true,
-  }))
+app.set("trust proxy", 1);
+
+app.use(
+    session({
+        cookie: {
+            secure: true,
+            maxAge: 60000,
+        },
+        store: new RedisStore(),
+        secret: "secret",
+        saveUninitialized: true,
+        resave: false,
+    })
+);
   
   app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
