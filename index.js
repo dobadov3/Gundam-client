@@ -18,15 +18,13 @@ app.use(cors())
 app.use(passport.initialize())
 app.use(passport.session())
 
-let redisClient = redis.createClient({
+const redisOptions = {
     host: "localhost",
+    logErrors: true,
     port: port,
-    password: "my secret",
-    db: 1,
-});
-
-redisClient.unref();
-redisClient.on("error", console.log);
+    prefix: "myapp:",
+    ttl: 6.04e8,
+};
 
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -38,7 +36,7 @@ app.use(
             secure: true,
             maxAge: 60000,
         },
-        store: new RedisStore({ client: redisClient }),
+        store: new RedisStore({ client: redisOptions }),
         secret: "secret",
         saveUninitialized: true,
         resave: false,
