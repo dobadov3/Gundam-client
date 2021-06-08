@@ -5,8 +5,10 @@ const mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var route = require('./routes/index.route');
+var cookieSession = require("cookie-session");
 var session = require('express-session')
 var cors = require('cors')
+var MemoryStore = require("memorystore")(session);
 require('dotenv').config();
 const passport = require('passport')
 const facebookStrategy = require('passport-facebook').Strategy
@@ -18,6 +20,7 @@ app.use(passport.session())
 
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
+
 app.set("trust proxy", 1);
 
 app.use(
@@ -26,6 +29,9 @@ app.use(
             secure: true,
             maxAge: 60000,
         },
+        store: new MemoryStore({
+          checkPeriod: 86400000 // prune expired entries every 24h
+        }),
         saveUninitialized: false,
         secret: "keyboard cat",
         resave: false,
