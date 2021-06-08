@@ -1,0 +1,38 @@
+extends ./index
+block variable 
+    -var page = "history";
+    -var title = "Lịch sử mua hàng"
+block content 
+    if (orders.length === 0)
+        h3.text-center Bạn chưa mua gì cả
+    else
+        form(method="GET" action="/account/history")
+            .row    
+                .col-lg-4
+                    label.col-form-label Mã đơn hàng:
+                    input(type="text" id="" class="form-control info_edit form-info" name="order_id")
+                .col-lg-4
+                    label.col-form-label Từ ngày:
+                    input(type="date" id="" class="form-control info_edit form-info" name="from_date")
+                .col-lg-4
+                    label.col-form-label Đến ngày:
+                    input(type="date" id="" class="form-control info_edit form-info" name="to_date")
+            .row(style="margin: 20px 0;")
+                .col-lg-12.btn-wrapper
+                    button.btn.btn-danger(type="submit" style="width: 10%;") Tìm kiếm
+        table.table.table-striped
+            tr 
+                th Mã đơn hàng
+                th Ngày tạo
+                th Tên sản phẩm
+                th Tổng cộng
+                th
+            each order in orders
+                tr 
+                    td= order.code
+                    td= order.date_create
+                    td= order.products[0].name
+                    td= order.totalPrice.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+                    td
+                        a.btn.btn-primary(href="/account/history/detail/"+order._id) Xem chi tiết
+                

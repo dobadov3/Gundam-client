@@ -1,0 +1,13 @@
+extends ../layouts/layout
+block contents
+    .container.mt-5
+        if (!products || products.length === 0)
+            h1.text-center Bạn chưa có sản phẩm nào trong giỏ hàng
+        else
+            include ./cart
+block script
+    script(src="/assets/js/city.js")
+    script(src="/assets/js/add-new-address.js")
+        
+
+

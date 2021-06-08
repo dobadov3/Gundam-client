@@ -1,0 +1,30 @@
+tr
+    td.romove-item
+        a.icon(href=`/cart/remove/${product._id}`, title='remove')
+            i.fal.fa-trash-alt
+    td.cart-image
+        a.entry-thumbnail(href='/products/detail/'+product._id)
+            img(src=product.image[0], alt='')
+    td.cart-product-name-info(colspan='2')
+        h4.cart-product-description
+            a(href=href='/products/detail/'+product.code)= product.name
+        .row
+            .col-sm-12
+            .rating.rateit-small
+            .col-sm-12
+            .reviews
+                | (06 Reviews)
+    td.cart-product-quantity
+        .quant-input
+            .arrows
+            .arrow.plus.gradient
+                span.ir
+                i.icon.fa.fa-sort-asc
+            .arrow.minus.gradient
+                span.ir
+                i.icon.fa.fa-sort-desc
+            input(type='text', value=product.quantity)
+    td.cart-product-sub-total
+        span.cart-sub-total-price= product.priceSale.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+    td.cart-product-grand-total
+        span.cart-grand-total-price= (product.priceSale*product.quantity).toLocaleString('vi', {style : 'currency', currency : 'VND'})

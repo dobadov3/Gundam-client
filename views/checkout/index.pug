@@ -1,0 +1,116 @@
+extends ../layouts/layout
+block contents
+  -var address = delivery
+    .body-content(style="margin-top: 30px")
+      .container
+        .checkout-box
+          .row
+            form(method="post" action="/order")
+              .col-xs-8.col-sm-8.col-md-8
+                  #accordion.panel-group.checkout-steps 
+                    .panel.panel-default.checkout-step-01
+                      // panel-heading
+                      .panel-heading
+                        h4.unicase-checkout-title
+                          a#checkoutMethod(data-toggle='collapse', data-parent='#accordion', href='#collapseOne')
+                            span 1
+                            | Phương thức vận chuyển
+                      // panel-heading
+                      #collapseOne.panel-collapse.collapse.in
+                        // panel-body
+                        .panel-body
+                          p Vui lòng chọn phương thức vận chuyển
+                          each d in delivery_method
+                            .form-check
+                              if (delivery_method.indexOf(d) === 0)
+                                input.form-check-input(type='radio', name='delivery_method' value=d._id id=d.name onclick="changeMethod(this)" checked)
+                              else 
+                                input.form-check-input(type='radio', name='delivery_method' value=d._id id=d.name onclick="changeMethod(this)")
+                              if (d.cost === 0)
+                                -var cost = "Miễn Phí"
+                              else 
+                                -var cost = d.cost.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+                              label.form-check-label(for=d.name)= d.content + " - " + cost   
+                    
+                    .panel.panel-default.checkout-step-02
+                      .panel-heading
+                        h4.unicase-checkout-title
+                          a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseTwo')
+                            span 2
+                            | Phương thức thanh toán
+                      | &#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    
+                      #collapseTwo.panel-collapse.collapse
+                        .panel-body
+                          p Vui lòng chọn phương thức thanh toán
+                          each p in payment_method
+                            .form-check
+                              if (payment_method.indexOf(p) === 0)
+                                input.form-check-input(type='radio', name='payment_method' id=p.name value=p._id checked)
+                              else
+                                input.form-check-input(type='radio', name='payment_method' id=p.name value=p._id)
+                              label.form-check-label(for=p.name)= p.content + " - " + p.description
+                    .panel.panel-default.checkout-step-03
+                      .panel-heading
+                        h4.unicase-checkout-title
+                          a.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseThree')
+                            span 3
+                            | Thông tin giao hàng
+                      | &#x9;&#x9;&#x9;&#x9;&#x9;&#x9;    
+                      #collapseThree.panel-collapse.collapse
+                        .panel-body
+                          p Tên:  
+                            span= currentAccount.name
+                          p Số điện thoại:  
+                            span= currentAccount.phone
+                          p Địa chỉ:  
+                            span= address
+                    
+              | &#x9;&#x9;&#x9;&#x9;
+              .col-xs-4.col-sm-4.col-md-4
+                // checkout-progress-sidebar
+                .checkout-progress-sidebar
+                  .panel-group
+                    .panel.panel-default
+                      .panel-heading
+                        h4.unicase-checkout-title Your Checkout Progress
+                      | &#x9;&#x9;   
+                      table.table
+                        each item in cartItems 
+                          tr
+                            td
+                              img(src=item.image[0], alt="a" width=50) 
+                            td
+                              strong= item.name 
+                            td
+                              strong= item.priceSale.toLocaleString('vi', {style : 'currency', currency : 'VND'})   
+                      hr
+                      div 
+                        strong Tạm tính:
+                        strong(style="float: right;")= finalPrice.toLocaleString('vi', {style : 'currency', currency : 'VND'})  
+                      div 
+                        strong Phí vận chuyển:
+                        strong#shipping_cost(style="float: right;")= delivery_method[0].cost.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+                      hr
+                      div 
+                        strong Tổng cộng:
+                        strong#finalPrice(style="float: right;")= finalPrice.toLocaleString('vi', {style : 'currency', currency : 'VND'})  
+                      hr
+                      input(type="text" value=currentUser._id name="id_account" style="display: none")
+                      input(type="text" value=address name="address" style="display: none")
+                      div.w-100(style="text-align: right")
+                        button.btn.btn-primary(type="submit") Đặt mua 
+                      
+                // checkout-progress-sidebar
+block script 
+  script.
+    var finalPrice = document.getElementById('finalPrice');
+    var shipping_cost = document.getElementById('shipping_cost');
+    var delivery_method = !{JSON.stringify(delivery_method)}
+    var final = !{JSON.stringify(finalPrice)}
+    finalPrice.textContent = (parseInt(final) + delivery_method[0].cost).toLocaleString('vi', {style : 'currency', currency : 'VND'}) 
+    var changeMethod = function(myRadio){
+    var filter = delivery_method.filter(item => item._id === myRadio.value)
+    shipping_cost.textContent = filter[0].cost.toLocaleString('vi', {style : 'currency', currency : 'VND'}) 
+    finalPrice.textContent = (parseInt(final) + parseInt(filter[0].cost)).toLocaleString('vi', {style : 'currency', currency : 'VND'}) 
+    }
+          

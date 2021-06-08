@@ -1,0 +1,23 @@
+extends ../layouts/layout
+block contents 
+    .body-content
+        .container(style="margin-top: 50px;") 
+            .sign-in-page
+                .row
+                    // Sign-in
+                    .col-md-12.col-sm-12.sign-in
+                        h4 Reset password
+                .row
+                    .col-md-6.col-sm-6.sign-in
+                        form.register-form.outer-top-xs(role='form', method="POST", action=`/authentication/forgot-pass`)
+                            .form-group
+                                label.info-title(for='exampleInputEmail1')
+                                    | Your Email 
+                                    span *
+                                input#exampleInputEmail1.form-control.unicase-form-control.text-input(type='text',name="email", required, value= values ? values.email : "")
+                            if (msg)
+                                p.text-danger= msg
+                            if (error)
+                                p(style="color: #dc3545 !important")= error
+                            button.btn-upper.btn.btn-primary.checkout-page-button(type='submit' style="float: right;") Submit
+                        

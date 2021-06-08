@@ -1,0 +1,82 @@
+extends ./index
+block variable 
+    -var page = "history";
+    -var title = "Lịch sử mua hàng"
+block content 
+    table.table.table-striped
+        tr 
+            th 
+            th Tên sản phẩm
+            th Số lượng
+            th Giá
+            th
+        each product in orders.products
+            tr 
+                td 
+                    img.img-responsive(src=product.image[0], alt="" width=50)
+                td= product.name
+                td= product.quantity
+                td= product.priceSale.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+                td 
+                    button.btn.btn-primary(type='button', data-toggle='modal', data-target=`#modal${product._id}`) &Dstrok;&aacute;nh gi&aacute;
+                    .modal.fade(tabindex='-1', role='dialog', aria-labelledby='exampleModalLabel', aria-hidden='true' id=`modal${product._id}`)
+                        .modal-dialog
+                            .modal-content
+                                .modal-header
+                                    button.close(type='button', data-dismiss='modal')
+                                        span(aria-hidden='true') &times;
+                                        span.sr-only Close
+                                    h4#exampleModalLabel.modal-title Thêm đánh giá sản phẩm
+                                .modal-body
+                                    form(role='form' method="POST" action=`/account/history/detail/${product._id}/rating`)
+                                        .form-group
+                                            label.control-label(for='message-text') Message:
+                                            textarea#message-text.form-control(name="message" required)
+                                        .form-group
+                                            label.control-label(for=`rating-${product._id}`) Point:
+                                            input(type="hidden" class="rating" id=`rating-${product._id}` name="point" required)
+                                        .modal-footer
+                                            button.btn.btn-default(type='button', data-dismiss='modal') Close
+                                            button.btn.btn-primary(type='submit') Send message
+
+    .row.order-info-bottom 
+        .col-lg-6
+            .order-info 
+                .order-header
+                    h4 Thông tin đơn hàng
+                .order-footer
+                    p= "Mã đơn hàng: "
+                        strong= orders.code
+                    p= "Ngày tạo: " + orders.date_create
+                    p= "Tình trạng thanh toán: " + orders.payment_status
+                    p= "Tình trạng đơn hàng: "  
+                        case orders.status 
+                            when "Chờ xác nhận"
+                                strong.text-primary= orders.status  
+                            when "Đã xử lý"
+                                strong.text-success= orders.status  
+                            when "Đang giao hàng"
+                                strong.text-info= orders.status  
+                            when "Đã hủy"
+                                strong.text-danger= orders.status  
+        .col-lg-6
+            .order-info 
+                .order-header
+                    h4 Thông tin thanh toán
+                .order-footer.payment-footer
+                    each product in orders.products
+                        span= product.name
+                        strong.total-price= product.priceSale.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+                        br
+                    hr.style-1
+                    span Tạm tính
+                    strong.total-price= orders.temp.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+                    hr.style-1
+                    span Phí vận chuyển
+                    strong.total-price= orders.ship_cost.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+                    hr.style-1
+                    span Tổng tiền
+                    strong.total-price.text-danger= orders.totalPrice.toLocaleString('vi', {style : 'currency', currency : 'VND'})
+    hr
+    a.btn-back-history(href="/account/history")
+        i.fal.fa-angle-double-left &nbsp; Quay lại lịch sử mua hàng

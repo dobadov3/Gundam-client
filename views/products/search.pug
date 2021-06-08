@@ -1,0 +1,120 @@
+extends ../layouts/layout
+block contents
+    .body-content.outer-top-xs
+        .container
+            .row
+                .col-xs-12.col-sm-12.col-md-3.sidebar
+                    .sidebar-module-container
+                        include ../layouts/compornents/sort-sidebar
+                        
+                        include ../layouts/compornents/member-description
+                        
+                .col-xs-12.col-sm-12.col-md-9.rht-col
+                    .clearfix.filters-container.m-t-10
+                        .row
+                            .col.col-sm-6.col-md-3.col-lg-3.col-xs-6
+                                .filter-tabs
+                                    ul#filter-tabs.nav.nav-tabs.nav-tab-box.nav-tab-fa-icon
+                                        li.active
+                                            a(data-toggle='tab', href='#grid-container')
+                                                i.icon.fa.fa-th-large
+                                                | Grid
+                                        li
+                                            a(data-toggle='tab', href='#list-container')
+                                                i.icon.fa.fa-bars
+                                                | List
+                                // /.filter-tabs
+                            // /.col
+                            .col.col-sm-12.col-md-5.col-lg-5.hidden-sm
+                                .col.col-sm-6.col-md-6.no-padding
+                                    .lbl-cnt
+                                        span.lbl Sort by
+                                        .fld.inline
+                                            .dropdown.dropdown-small.dropdown-med.dropdown-white.inline
+                                                select#select-sort.form-control(name="") 
+                                                    option(value="sortLowestFirst" selected) Giá: Từ thấp đến cao
+                                                    option(value="sortHighestFirst") Giá: Từ cao đến thấp
+                                                    option(value="sortByName") Sắp xếp theo tên
+                                        // /.fld
+                                    // /.lbl-cnt
+                                // /.col
+                                .col.col-sm-6.col-md-6.no-padding.hidden-sm.hidden-md
+                                    
+                                // /.col
+                            // /.col
+                            .col.col-sm-6.col-md-4.col-xs-6.col-lg-4.text-right
+                                .pagination-container
+                                    ul.list-inline.list-unstyled
+                                        li.prev#li-prev
+                                            a(href='#')
+                                                i.fa.fa-angle-left
+                                        li.next#li-next    
+                                            a(href='#')
+                                                i.fa.fa-angle-right
+                                        
+                                    // /.list-inline
+                                // /.pagination-container
+                            // /.col
+                        // /.row
+                    .search-result-container
+                        #myTabContent.tab-content.category-list
+                            #grid-container.tab-pane.active
+                                .category-product
+                                    .row#grid-product
+                                        //- each product in products
+                                        //-     .col-sm-6.col-md-4.col-lg-3
+                                        //-         include ../layouts/compornents/product-grid
+                                    // /.row
+                                // /.category-product
+                            // /.tab-pane
+                            #list-container.tab-pane
+                                .category-product#list-product
+                                // /.category-product
+                            // /.tab-pane #list-container
+                        // /.tab-content
+                        .clearfix.filters-container.bottom-row
+                            .text-right
+                                .pagination-container
+                                    ul.list-inline.list-unstyled
+                                        li.prev#li-prev
+                                            a(href='#')
+                                                i.fa.fa-angle-left
+                                        li.next#li-next    
+                                            a(href='#')
+                                                i.fa.fa-angle-right
+                                // /.list-inline
+                            // /.pagination-container
+                        // /.text-right
+                        // /.filters-container
+                    // /.search-result-container
+                // /.col
+            // /.row
+block script 
+    script(src="/assets/js/product.js") 
+    script.
+        var page = 1
+        var maxPage = !{JSON.stringify(maxPage)}
+        var productName = !{JSON.stringify(productName)}
+        var selectSort = document.getElementById("select-sort");
+        sortSearchProduct(productName, page, selectSort.value)
+        var prev = document.getElementById("li-prev");
+        var next = document.getElementById("li-next");
+        next.addEventListener('click', () => {
+        page = page + 1;
+        adjustDisable(prev, next, page, maxPage)
+        nextSearchPage(productName, page, selectSort.value)
+        });
+        prev.addEventListener('click', () => {
+        page = page - 1;
+        adjustDisable(prev, next, page, maxPage)
+        prevSearchPage(productName, page, selectSort.value)
+        });
+        selectSort.addEventListener('change', () => {
+        sortSearchProduct(productName, page, selectSort.value)
+        })
+        if(page === 1){
+        prev.classList.add('disabled')
+        }
+
+
+
